@@ -1,24 +1,27 @@
 #!/bin/bash
+docker build -t ubuntu1504-kafka .
+
+PATHROOT=/home/kaijiezhou/workspaces/MasterProject/kafka_demo
+
 docker run -d -t --name node1 \
---env-file /Users/duwentao/Master_Project/kafka_demo/docker-kafka/env.list.1 \
--v /Users/duwentao/Master_Project/kafka_demo/docker-kafka/docker-share:/var/docker-share \
+--env-file $PATHROOT/docker-kafka/env.list.1 \
+-v $PATHROOT/docker-kafka/docker-share:/var/docker-share \
 ubuntu1504-kafka
 
 docker run -d -t --name node2 \
---env-file /Users/duwentao/Master_Project/kafka_demo/docker-kafka/env.list.2 \
--v /Users/duwentao/Master_Project/kafka_demo/docker-kafka/docker-share:/var/docker-share \
+--env-file $PATHROOT/docker-kafka/env.list.2 \
+-v $PATHROOT/docker-kafka/docker-share:/var/docker-share \
 ubuntu1504-kafka
 
 docker run -d -t --name node3 \
---env-file /Users/duwentao/Master_Project/kafka_demo/docker-kafka/env.list.3 \
--v /Users/duwentao/Master_Project/kafka_demo/docker-kafka/docker-share:/var/docker-share \
+--env-file $PATHROOT/docker-kafka/env.list.3 \
+-v $PATHROOT/docker-kafka/docker-share:/var/docker-share \
 ubuntu1504-kafka
-
-NODE1IP=$(docker exec -t node1 cat /etc/hosts | grep node1.bridge | awk '{ print $1 }')
+NODE1IP=$(docker exec -t node1 head -1 /etc/hosts | awk '{ print $1 }')
 sleep 1
-NODE2IP=$(docker exec -t node2 cat /etc/hosts | grep node2.bridge | awk '{ print $1 }')
+NODE2IP=$(docker exec -t node2 head -1 /etc/hosts | awk '{ print $1 }')
 sleep 1
-NODE3IP=$(docker exec -t node3 cat /etc/hosts | grep node3.bridge | awk '{ print $1 }')
+NODE3IP=$(docker exec -t node3 head -1 /etc/hosts | awk '{ print $1 }')
 
 cat > docker-share/zookeeper/newconfig << EOF
 server.1=$NODE1IP:2888:3888
